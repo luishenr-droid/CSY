@@ -1,8 +1,8 @@
 {
   "name": "quiz-credsystem",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "private": true,
-  "description": "Quiz corporativo em tempo real com layout Credsystem simplificado e áudio desbloqueável.",
+  "description": "Quiz corporativo responsivo com confirmação de pronto e contagem regressiva.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

@@ -19,13 +19,17 @@ const state = {
   self: null,
   playerCreds: null,
   presenterCreds: null,
+  roomRole: null,
   timerInterval: null,
   lastRankingKey: null,
   audio: {
     context: null,
+    masterGain: null,
     timer: null,
     activeTheme: null,
     enabled: true,
+    unlocked: false,
+    gateVisible: false,
     step: 0,
   },
 };
@@ -97,13 +101,37 @@ function startCountdown(room) {
   state.timerInterval = setInterval(tick, 250);
 }
 
+function startOpeningCountdown(room) {
+  clearTimer();
+  const el = document.getElementById('opening-countdown-number');
+  if (!el || !room.countdownStartedAt) return;
+  const seconds = Number(room.countdownSeconds || 3);
+  const tick = () => {
+    const elapsed = (Date.now() - room.countdownStartedAt) / 1000;
+    const remaining = Math.max(1, Math.ceil(seconds - elapsed));
+    el.textContent = remaining;
+    el.classList.remove('countdown-pop');
+    void el.offsetWidth;
+    el.classList.add('countdown-pop');
+  };
+  tick();
+  state.timerInterval = setInterval(tick, 180);
+}
+
+function openingCountdownMarkup(room, role = 'player') {
+  const subtitle = role === 'player'
+    ? 'Prepare-se. A primeira pergunta vai aparecer.'
+    : 'Todos prontos. A primeira pergunta começa em instantes.';
+  return `<div class="start-countdown-screen"><div class="start-countdown-card"><div class="countdown-brand"><span class="presenter-brand-mark"></span><strong>Quiz Credsystem</strong></div><p>${subtitle}</p><div id="opening-countdown-number" class="opening-countdown-number">${room.countdownSeconds || 3}</div><span>Começando...</span></div></div>`;
+}
+
 function avatarVisual(avatar, small = false) {
   const sizeClass = small ? 'mini-avatar' : 'avatar-visual';
   return `<span class="${sizeClass}" style="background:linear-gradient(135deg,${avatar.colors[0]},${avatar.colors[1]})">${avatar.emoji}</span>`;
 }
 
 function phaseLabel(phase) {
-  return ({ lobby: 'Sala de espera', question: 'Pergunta aberta', answer: 'Resposta revelada', ranking: 'Ranking', finished: 'Encerrado' })[phase] || phase;
+  return ({ lobby: 'Sala de espera', countdown: 'Começando', question: 'Pergunta aberta', answer: 'Resposta revelada', ranking: 'Ranking', finished: 'Encerrado' })[phase] || phase;
 }
 
 function renderQr(elementId, text, size = 240) {
@@ -138,20 +166,43 @@ async function copyText(text) {
 }
 
 // Música gerada no próprio navegador, sem arquivos externos ou direitos autorais.
+// Os navegadores só liberam áudio depois de um clique do usuário. Por isso, a
+// apresentação exibe uma confirmação de som antes de começar a trilha.
 function ensureAudio() {
   if (!state.audio.enabled) return null;
   if (!state.audio.context) {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return null;
-    state.audio.context = new AudioContext();
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    state.audio.context = new AudioContextClass();
+    state.audio.masterGain = state.audio.context.createGain();
+    state.audio.masterGain.gain.value = .9;
+    state.audio.masterGain.connect(state.audio.context.destination);
   }
-  if (state.audio.context.state === 'suspended') state.audio.context.resume().catch(() => {});
   return state.audio.context;
+}
+
+async function unlockAudio() {
+  const context = ensureAudio();
+  if (!context) return false;
+  try {
+    if (context.state === 'suspended') await context.resume();
+    // Pulso silencioso para confirmar a liberação do áudio em Safari/Chrome móvel.
+    const buffer = context.createBuffer(1, 1, context.sampleRate);
+    const source = context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(state.audio.masterGain || context.destination);
+    source.start(0);
+    state.audio.unlocked = context.state === 'running';
+    return state.audio.unlocked;
+  } catch (error) {
+    state.audio.unlocked = false;
+    return false;
+  }
 }
 
 function playNote(frequency, duration = .12, type = 'sine', volume = .045, delay = 0) {
   const context = ensureAudio();
-  if (!context) return;
+  if (!context || !state.audio.unlocked || context.state !== 'running') return;
   const oscillator = context.createOscillator();
   const gain = context.createGain();
   oscillator.type = type;
@@ -159,9 +210,9 @@ function playNote(frequency, duration = .12, type = 'sine', volume = .045, delay
   gain.gain.setValueAtTime(0.0001, context.currentTime + delay);
   gain.gain.exponentialRampToValueAtTime(volume, context.currentTime + delay + .012);
   gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + delay + duration);
-  oscillator.connect(gain).connect(context.destination);
+  oscillator.connect(gain).connect(state.audio.masterGain || context.destination);
   oscillator.start(context.currentTime + delay);
-  oscillator.stop(context.currentTime + delay + duration + .02);
+  oscillator.stop(context.currentTime + delay + duration + .03);
 }
 
 function stopMusic() {
@@ -172,13 +223,12 @@ function stopMusic() {
 }
 
 function startMusic(theme) {
-  if (!state.audio.enabled || theme === 'none') {
+  if (!state.audio.enabled || !state.audio.unlocked || theme === 'none') {
     stopMusic();
     return;
   }
   if (state.audio.activeTheme === theme && state.audio.timer) return;
   stopMusic();
-  ensureAudio();
   state.audio.activeTheme = theme;
   const patterns = {
     pulse: [261.63, 329.63, 392.00, 329.63, 293.66, 369.99, 440.00, 369.99],
@@ -189,8 +239,8 @@ function startMusic(theme) {
   const interval = theme === 'focus' ? 620 : 360;
   const tick = () => {
     const note = pattern[state.audio.step % pattern.length];
-    playNote(note, theme === 'focus' ? .44 : .18, theme === 'pulse' ? 'triangle' : 'sine', theme === 'focus' ? .025 : .035);
-    if (state.audio.step % 4 === 0) playNote(theme === 'upbeat' ? 98 : 82.41, .1, 'sine', .05);
+    playNote(note, theme === 'focus' ? .44 : .20, theme === 'pulse' ? 'triangle' : 'sine', theme === 'focus' ? .035 : .05);
+    if (state.audio.step % 4 === 0) playNote(theme === 'upbeat' ? 98 : 82.41, .11, 'sine', .065);
     state.audio.step += 1;
   };
   tick();
@@ -199,29 +249,79 @@ function startMusic(theme) {
 
 function playSuspense() {
   stopMusic();
-  ensureAudio();
+  if (!state.audio.enabled || !state.audio.unlocked) return;
   const notes = [110, 123.47, 138.59, 155.56, 174.61, 196, 220, 246.94];
   notes.forEach((note, index) => {
-    playNote(note, .32, 'sawtooth', .035 + index * .003, index * .38);
-    playNote(55, .08, 'sine', .06, index * .38);
+    playNote(note, .34, 'sawtooth', .045 + index * .003, index * .38);
+    playNote(55, .09, 'sine', .075, index * .38);
   });
-  playNote(523.25, .7, 'triangle', .09, notes.length * .38 + .1);
+  playNote(523.25, .75, 'triangle', .11, notes.length * .38 + .1);
 }
 
 function syncMusic(room) {
-  if (!room) return;
+  if (!room || !['admin', 'screen'].includes(state.roomRole)) {
+    stopMusic();
+    return;
+  }
+  if (!state.audio.enabled || !state.audio.unlocked) return;
   if (room.phase === 'ranking') return;
   if (room.phase === 'finished' || room.phase === 'answer') stopMusic();
   else if (room.phase === 'question' || room.phase === 'lobby') startMusic(room.musicTheme);
 }
 
-function toggleAudio() {
-  state.audio.enabled = !state.audio.enabled;
-  if (!state.audio.enabled) stopMusic();
-  else if (state.room) syncMusic(state.room);
-  showToast(state.audio.enabled ? 'Som ativado.' : 'Som desativado.');
+async function toggleAudio() {
+  if (state.audio.enabled && state.audio.unlocked) {
+    state.audio.enabled = false;
+    stopMusic();
+    showToast('Som desativado.');
+  } else {
+    state.audio.enabled = true;
+    const unlocked = await unlockAudio();
+    if (!unlocked) {
+      showToast('O navegador não liberou o áudio. Toque novamente em Ativar som.');
+    } else {
+      syncMusic(state.room);
+      showToast('Som ativado.');
+    }
+  }
   const button = document.getElementById('audio-toggle');
-  if (button) button.textContent = state.audio.enabled ? '🔊 Som' : '🔇 Som';
+  if (button) button.textContent = state.audio.enabled && state.audio.unlocked ? 'Som ligado' : 'Ativar som';
+}
+
+function showAudioGate() {
+  const room = state.room;
+  if (!room || !['admin', 'screen'].includes(state.roomRole)) return;
+  if (room.musicTheme === 'none' || state.audio.unlocked || state.audio.gateVisible) return;
+  state.audio.gateVisible = true;
+  const overlay = document.createElement('div');
+  overlay.className = 'audio-gate';
+  overlay.innerHTML = `
+    <div class="audio-gate-card">
+      <div class="audio-gate-mark">♪</div>
+      <h2>Ativar música da apresentação?</h2>
+      <p>A música precisa de uma confirmação antes de tocar neste navegador.</p>
+      <button id="audio-gate-enable" class="btn btn-primary btn-large btn-block">Ativar som</button>
+      <button id="audio-gate-skip" class="btn btn-light btn-block">Continuar sem som</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#audio-gate-enable').addEventListener('click', async () => {
+    const unlocked = await unlockAudio();
+    if (!unlocked) return showToast('Não foi possível ativar o som. Tente novamente.');
+    state.audio.gateVisible = false;
+    overlay.remove();
+    syncMusic(state.room);
+    const button = document.getElementById('audio-toggle');
+    if (button) button.textContent = 'Som ligado';
+  });
+  overlay.querySelector('#audio-gate-skip').addEventListener('click', () => {
+    state.audio.enabled = false;
+    state.audio.unlocked = true;
+    state.audio.gateVisible = false;
+    stopMusic();
+    overlay.remove();
+    const button = document.getElementById('audio-toggle');
+    if (button) button.textContent = 'Ativar som';
+  });
 }
 
 async function init() {
@@ -245,39 +345,32 @@ async function init() {
 function renderHome() {
   clearTimer();
   stopMusic();
+  state.roomRole = 'home';
   app.innerHTML = `
-    ${topbar(`<button id="admin-open" class="btn btn-dark">Área administrativa</button>`)}
-    <main class="container">
-      <section class="hero">
-        <div>
-          <div class="hero-badge">● treinamento em tempo real</div>
-          <h1>Aprender ficou mais <span class="gradient-text">vivo.</span></h1>
-          <p>Quizzes corporativos com sala ao vivo, pódio, premiações, música, relatórios e até 100 participantes.</p>
-          <div class="row" style="margin-top:26px">
-            <button id="join-home" class="btn btn-primary btn-large">Entrar em uma sala</button>
-            <button id="admin-home" class="btn btn-light btn-large">Criar e apresentar quiz</button>
-          </div>
+    <main class="minimal-home">
+      <section class="minimal-home-card">
+        ${brandMarkup()}
+        <div class="minimal-home-copy">
+          <h1>Entre no quiz</h1>
+          <p>Digite o código exibido pelo apresentador.</p>
         </div>
-        <div class="hero-card">
-          <div class="eyebrow" style="background:rgba(255,255,255,.13);color:white">Pergunta 3 de 10</div>
-          <div class="mock-question">Qual atitude cria mais valor para o cliente?</div>
-          <div class="mock-grid">
-            <div class="mock-option">◇ Ouvir e personalizar</div>
-            <div class="mock-option">○ Repetir o roteiro</div>
-            <div class="mock-option">◇ Ignorar objeções</div>
-            <div class="mock-option">○ Falar sem pausas</div>
-          </div>
+        <div class="minimal-code-row">
+          <input id="home-room-code" class="input code-input" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" aria-label="Código da sala">
+          <button id="join-home" class="btn btn-primary btn-large">Entrar</button>
         </div>
-      </section>
-      <section class="grid-3">
-        <article class="card"><h3>⚡ Ao vivo</h3><p class="muted">O apresentador controla pergunta, resposta, ranking e próxima rodada.</p></article>
-        <article class="card"><h3>🏆 Premiação</h3><p class="muted">Pódio animado para primeiro, segundo e terceiro lugares.</p></article>
-        <article class="card"><h3>📊 Relatório Excel</h3><p class="muted">Presença, data, horário e todas as respostas por participante.</p></article>
+        <button id="admin-home" class="minimal-admin-link">Acessar área administrativa</button>
       </section>
     </main>`;
-  document.getElementById('admin-open').addEventListener('click', openAdmin);
+  const input = document.getElementById('home-room-code');
+  input.addEventListener('input', () => input.value = input.value.replace(/\D/g, '').slice(0, 6));
+  const proceed = () => {
+    if (input.value.length !== 6) return showToast('Digite os seis números da sala.');
+    location.href = `/?room=${encodeURIComponent(input.value)}`;
+  };
+  document.getElementById('join-home').addEventListener('click', proceed);
+  input.addEventListener('keydown', (event) => { if (event.key === 'Enter') proceed(); });
   document.getElementById('admin-home').addEventListener('click', openAdmin);
-  document.getElementById('join-home').addEventListener('click', renderCodeEntry);
+  requestAnimationFrame(() => input.focus());
 }
 
 function renderCodeEntry() {
@@ -678,6 +771,7 @@ async function saveQuizEditor() {
 }
 
 async function openPlayer(roomCode, accessKey) {
+  state.roomRole = 'player';
   const stored = sessionStorage.getItem(PLAYER_KEY(roomCode));
   if (stored) {
     try {
@@ -771,6 +865,7 @@ function renderPlayerState() {
   const room = state.room;
   syncMusic(room);
   if (room.phase === 'lobby') return renderPlayerLobby(room);
+  if (room.phase === 'countdown') return renderPlayerCountdown(room);
   if (room.phase === 'question') return renderPlayerQuestion(room);
   if (room.phase === 'answer') return renderPlayerAnswer(room);
   if (room.phase === 'ranking') return renderPlayerRanking(room);
@@ -779,14 +874,42 @@ function renderPlayerState() {
 
 function renderPlayerLobby(room) {
   clearTimer();
-  app.innerHTML = `<div class="wait-screen"><div class="wait-card">${avatarVisual(state.self.avatar)}<h1>Você entrou!</h1><p>${escapeHtml(state.self.nickname)}, aguarde o apresentador iniciar.</p><div class="chip" style="background:rgba(255,255,255,.18);color:white">${room.participantCount}/${room.maxParticipants} participantes</div><div class="spinner" style="margin-top:26px"></div></div></div>`;
+  const ready = Boolean(state.self.ready);
+  app.innerHTML = `<div class="game-shell participant-shell">
+    <header class="game-header unified-game-header"><div class="compact-game-brand"><span class="presenter-brand-mark"></span><strong>Quiz Credsystem</strong></div><span class="room-badge">Sala ${escapeHtml(room.roomCode)}</span></header>
+    <main class="participant-stage">
+      <section class="participant-card">
+        ${avatarVisual(state.self.avatar)}
+        <div class="participant-copy"><span class="eyebrow">Você entrou</span><h1>Olá, ${escapeHtml(state.self.nickname)}!</h1><p>Confirme quando estiver pronto para começar.</p></div>
+        <button id="player-ready" class="ready-button ${ready ? 'is-ready' : ''}"><span class="ready-icon">${ready ? '✓' : '○'}</span><span>${ready ? 'Estou pronto' : 'Marcar como pronto'}</span></button>
+        <div class="lobby-progress"><div><strong>${room.readyCount || 0}</strong><span>prontos</span></div><div><strong>${room.participantCount}</strong><span>na sala</span></div></div>
+        <p class="ready-helper">${ready ? 'Tudo certo. Aguarde o apresentador iniciar.' : 'O quiz só começa quando todos estiverem prontos.'}</p>
+      </section>
+    </main>
+  </div>`;
+  document.getElementById('player-ready').addEventListener('click', async () => {
+    const button = document.getElementById('player-ready');
+    try {
+      button.disabled = true;
+      await api('/api/player/ready', { roomCode: room.roomCode, ...state.playerCreds, ready: !ready });
+    } catch (error) {
+      button.disabled = false;
+      showToast(error.message);
+    }
+  });
+}
+
+function renderPlayerCountdown(room) {
+  clearTimer();
+  app.innerHTML = openingCountdownMarkup(room, 'player');
+  startOpeningCountdown(room);
 }
 
 function renderPlayerQuestion(room) {
   const answered = state.self.answerIndex !== null;
-  app.innerHTML = `<div class="game-shell">
-    <header class="game-header"><div>${escapeHtml(state.self.nickname)} · ${state.self.score} pontos</div><div class="row"><span>Pergunta ${room.currentQuestionIndex + 1}/${room.totalQuestions}</span><div id="timer" class="timer">${room.question.timeLimit}</div></div></header>
-    <main class="game-stage"><h1 class="question-title">${escapeHtml(room.question.text)}</h1><div class="answers-grid">${room.question.options.map((option, index) => `<button class="answer-btn ${answered && state.self.answerIndex === index ? 'selected' : ''}" data-answer="${index}" ${answered ? 'disabled' : ''}><span class="shape"></span><span>${escapeHtml(option)}</span></button>`).join('')}</div>${answered ? '<div class="notice success text-center">Resposta enviada. Aguarde o encerramento.</div>' : ''}</main>
+  app.innerHTML = `<div class="game-shell participant-shell">
+    <header class="game-header unified-game-header"><div class="player-meta">${avatarVisual(state.self.avatar,true)}<div><strong>${escapeHtml(state.self.nickname)}</strong><small>${state.self.score} pontos</small></div></div><div class="question-progress"><span>${room.currentQuestionIndex + 1}/${room.totalQuestions}</span><div id="timer" class="timer">${room.question.timeLimit}</div></div></header>
+    <main class="game-stage unified-question-stage"><div class="question-kicker">Pergunta ${room.currentQuestionIndex + 1}</div><h1 class="question-title">${escapeHtml(room.question.text)}</h1><div class="answers-grid participant-answers count-${room.question.options.length}">${room.question.options.map((option, index) => `<button class="answer-btn ${answered && state.self.answerIndex === index ? 'selected' : ''}" data-answer="${index}" ${answered ? 'disabled' : ''}><span class="shape"></span><span>${escapeHtml(option)}</span></button>`).join('')}</div>${answered ? '<div class="answer-sent">✓ Resposta enviada. Aguarde o encerramento.</div>' : ''}</main>
   </div>`;
   startCountdown(room);
   document.querySelectorAll('[data-answer]').forEach((button) => button.addEventListener('click', async () => {
@@ -825,6 +948,7 @@ function renderPlayerFinished(room) {
 }
 
 async function openPresenter(roomCode) {
+  state.roomRole = 'admin';
   const stored = sessionStorage.getItem(PRESENTER_KEY(roomCode));
   if (!stored) {
     app.innerHTML = `<div class="wait-screen"><div class="wait-card"><h1>Apresentação não encontrada</h1><p>Abra esta sala pelo painel administrativo.</p><button id="go-admin" class="btn btn-light">Ir ao painel</button></div></div>`;
@@ -837,6 +961,7 @@ async function openPresenter(roomCode) {
     state.room = result.state;
     openRoomEvents('admin', roomCode, state.presenterCreds.adminToken);
     renderPresenterState();
+    showAudioGate();
   } catch (error) {
     showToast(error.message);
     sessionStorage.removeItem(PRESENTER_KEY(roomCode));
@@ -848,6 +973,7 @@ function renderPresenterState() {
   const room = state.room;
   syncMusic(room);
   if (room.phase === 'lobby') renderPresenterLobby(room);
+  else if (room.phase === 'countdown') renderPresenterCountdown(room);
   else if (room.phase === 'question') renderPresenterQuestion(room);
   else if (room.phase === 'answer') renderPresenterAnswer(room);
   else if (room.phase === 'ranking') renderPresenterRanking(room);
@@ -856,29 +982,37 @@ function renderPresenterState() {
 }
 
 function presenterHeader(room) {
-  return `<header class="presenter-header">${brandMarkup(true)}<div class="row"><span class="chip" style="background:rgba(255,255,255,.12);color:white">${escapeHtml(phaseLabel(room.phase))}</span><button id="audio-toggle" class="btn btn-light">${state.audio.enabled ? '🔊 Som' : '🔇 Som'}</button></div></header>`;
+  const soundLabel = state.audio.enabled && state.audio.unlocked ? 'Som ligado' : 'Ativar som';
+  return `<header class="presenter-header"><div class="presenter-brand"><span class="presenter-brand-mark"></span><strong>Quiz Credsystem</strong></div><div class="presenter-header-meta"><span>${escapeHtml(phaseLabel(room.phase))}</span><button id="audio-toggle" class="presenter-audio-button">${soundLabel}</button></div></header>`;
 }
 
 function renderPresenterLobby(room) {
   clearTimer();
-  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage"><div class="presenter-lobby"><section class="card dark"><div class="eyebrow" style="background:rgba(255,255,255,.12);color:white">Entre pelo QR Code ou código</div><div class="lobby-code">${room.roomCode}</div><div id="presenter-qr" class="qr-wrap" style="margin:24px 0"></div><div class="row"><input id="join-link" class="input" readonly value="${escapeHtml(room.joinUrl)}"><button id="copy-join" class="btn btn-light">Copiar</button></div><p class="white-muted">O link e o QR Code serão substituídos automaticamente após o encerramento.</p></section><section class="card dark"><div class="section-title"><h2>Participantes</h2><span class="chip" style="background:rgba(255,255,255,.13);color:white">${room.participantCount}/${room.maxParticipants}</span></div><div class="player-cloud">${room.players.length ? room.players.map((player) => `<div class="player-pill">${avatarVisual(player.avatar,true)}<div><strong>${escapeHtml(player.nickname)}</strong><div class="white-muted" style="font-size:12px">${escapeHtml(player.fullName)}</div></div></div>`).join('') : '<div class="empty" style="color:rgba(255,255,255,.65);border-color:rgba(255,255,255,.25)">Aguardando participantes...</div>'}</div></section></div></main>${controlDock(room)}</div>`;
-  renderQr('presenter-qr', room.joinUrl, 260);
+  const allReady = room.participantCount > 0 && room.readyCount === room.participantCount;
+  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage"><div class="presenter-lobby standardized-lobby"><section class="lobby-access-panel"><div><span class="lobby-label">Entre pelo código</span><div class="lobby-code">${room.roomCode}</div><p>Escaneie o QR Code ou use o link da sala.</p></div><div id="presenter-qr" class="qr-wrap compact-qr"></div><div class="copy-link-row"><input id="join-link" class="input" readonly value="${escapeHtml(room.joinUrl)}"><button id="copy-join" class="btn btn-light">Copiar</button></div></section><section class="lobby-ready-panel"><div class="ready-summary"><div><span>Prontos</span><strong>${room.readyCount || 0}/${room.participantCount}</strong></div><div class="ready-meter"><span style="width:${room.participantCount ? Math.round((room.readyCount || 0) / room.participantCount * 100) : 0}%"></span></div><p>${allReady ? 'Todos estão prontos. Você já pode iniciar.' : room.participantCount ? 'Aguardando todos confirmarem que estão prontos.' : 'Aguardando participantes entrarem.'}</p></div><div class="player-ready-list">${room.players.length ? room.players.map((player) => `<div class="ready-player ${player.ready ? 'is-ready' : ''}">${avatarVisual(player.avatar,true)}<div><strong>${escapeHtml(player.nickname)}</strong><small>${player.ready ? 'Pronto' : 'Aguardando'}</small></div><span class="ready-check">${player.ready ? '✓' : '…'}</span></div>`).join('') : '<div class="empty dark-empty">Nenhum participante entrou ainda.</div>'}</div></section></div></main>${controlDock(room)}</div>`;
+  renderQr('presenter-qr', room.joinUrl, 220);
+}
+
+function renderPresenterCountdown(room) {
+  clearTimer();
+  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}${openingCountdownMarkup(room, 'presenter')}${controlDock(room)}</div>`;
+  startOpeningCountdown(room);
 }
 
 function renderPresenterQuestion(room) {
-  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage"><div class="question-top"><span class="chip" style="background:rgba(255,255,255,.12);color:white">Pergunta ${room.currentQuestionIndex + 1} de ${room.totalQuestions}</span><div id="timer" class="timer">${room.question.timeLimit}</div><span class="chip" style="background:rgba(255,255,255,.12);color:white">${room.responseCount}/${room.participantCount} respostas</span></div><h1 class="question-title">${escapeHtml(room.question.text)}</h1><div class="answers-grid">${room.question.options.map((option) => `<div class="answer-card"><span class="shape"></span><span>${escapeHtml(option)}</span></div>`).join('')}</div></main>${controlDock(room)}</div>`;
+  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage presenter-question-stage"><div class="question-top"><span>Pergunta ${room.currentQuestionIndex + 1}/${room.totalQuestions}</span><div id="timer" class="timer">${room.question.timeLimit}</div><span>${room.responseCount}/${room.participantCount} respostas</span></div><h1 class="question-title">${escapeHtml(room.question.text)}</h1><div class="answers-grid presenter-answers count-${room.question.options.length}">${room.question.options.map((option) => `<div class="answer-card"><span class="shape"></span><span>${escapeHtml(option)}</span></div>`).join('')}</div></main>${controlDock(room)}</div>`;
   startCountdown(room);
 }
 
 function renderPresenterAnswer(room) {
   clearTimer();
   const maxCount = Math.max(1, ...room.distribution.map((item) => item.count));
-  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage"><h1 class="question-title">Resposta correta</h1><div class="answers-grid">${room.question.options.map((option,index) => `<div class="answer-card ${index === room.question.correctIndex ? 'correct' : 'dimmed'}"><span class="shape"></span><span>${escapeHtml(option)}</span></div>`).join('')}</div><div class="distribution">${room.distribution.map((item) => `<div class="distribution-row ${item.correct ? 'correct' : ''}"><strong>${escapeHtml(item.option)}</strong><div class="bar-track"><div class="bar-fill" style="width:${Math.round(item.count / maxCount * 100)}%"></div></div><strong>${item.count}</strong></div>`).join('')}</div>${room.question.explanation ? `<div class="card" style="color:var(--ink)"><h3>Explicação</h3><p>${escapeHtml(room.question.explanation)}</p></div>` : ''}</main>${controlDock(room)}</div>`;
+  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage presenter-answer-stage"><div class="compact-section-title"><span>Resposta correta</span><strong>${room.responseCount}/${room.participantCount} responderam</strong></div><div class="answers-grid presenter-answers count-${room.question.options.length}">${room.question.options.map((option,index) => `<div class="answer-card ${index === room.question.correctIndex ? 'correct' : 'dimmed'}"><span class="shape"></span><span>${escapeHtml(option)}</span></div>`).join('')}</div><div class="distribution compact-distribution">${room.distribution.map((item) => `<div class="distribution-row ${item.correct ? 'correct' : ''}"><strong>${escapeHtml(item.option)}</strong><div class="bar-track"><div class="bar-fill" style="width:${Math.round(item.count / maxCount * 100)}%"></div></div><strong>${item.count}</strong></div>`).join('')}</div>${room.question.explanation ? `<div class="presenter-explanation"><strong>Explicação:</strong> ${escapeHtml(room.question.explanation)}</div>` : ''}</main>${controlDock(room)}</div>`;
 }
 
 function renderPresenterRanking(room) {
   clearTimer();
-  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage"><h1 class="question-title">Ranking da rodada</h1>${leaderboardMarkup(room.leaderboard)}</main>${controlDock(room)}</div>`;
+  app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage presenter-ranking-stage"><div class="compact-section-title"><span>Ranking da rodada</span><strong>${room.currentQuestionIndex + 1}/${room.totalQuestions}</strong></div>${leaderboardMarkup(room.leaderboard)}</main>${controlDock(room)}</div>`;
   startRankingAnimation(room);
 }
 
@@ -891,12 +1025,13 @@ function renderPresenterFinished(room) {
 
 function controlDock(room) {
   let actions = '';
-  if (room.phase === 'lobby') actions = `<button class="btn btn-primary btn-large" data-command="start">▶ Iniciar quiz</button><button class="btn btn-danger" data-command="finish">Encerrar sala</button>`;
-  if (room.phase === 'question') actions = `<button class="btn btn-warning btn-large" data-command="reveal">✓ Encerrar e revelar resposta</button><button class="btn btn-danger" data-command="finish">Encerrar quiz</button>`;
-  if (room.phase === 'answer') actions = `<button class="btn btn-primary btn-large" data-command="ranking">🏆 Mostrar ranking</button><button class="btn btn-danger" data-command="finish">Encerrar quiz</button>`;
-  if (room.phase === 'ranking') actions = `<button class="btn btn-primary btn-large" data-command="next">${room.currentQuestionIndex + 1 >= room.totalQuestions ? 'Finalizar e mostrar pódio' : 'Próxima questão →'}</button><button class="btn btn-danger" data-command="finish">Encerrar quiz</button>`;
+  if (room.phase === 'lobby') { const canStart = room.participantCount > 0 && room.readyCount === room.participantCount; actions = `<button class="btn btn-primary" data-command="start" ${canStart ? '' : 'disabled'}>${canStart ? 'Iniciar quiz' : `Aguardando ${Math.max(0, room.participantCount - (room.readyCount || 0))} pronto(s)`}</button><button class="btn btn-danger" data-command="finish">Encerrar sala</button>`; }
+  if (room.phase === 'countdown') actions = `<button class="btn btn-danger" data-command="finish">Cancelar e encerrar</button>`;
+  if (room.phase === 'question') actions = `<button class="btn btn-warning" data-command="reveal">Revelar resposta</button><button class="btn btn-danger" data-command="finish">Encerrar quiz</button>`;
+  if (room.phase === 'answer') actions = `<button class="btn btn-primary" data-command="ranking">Mostrar ranking</button><button class="btn btn-danger" data-command="finish">Encerrar quiz</button>`;
+  if (room.phase === 'ranking') actions = `<button class="btn btn-primary" data-command="next">${room.currentQuestionIndex + 1 >= room.totalQuestions ? 'Mostrar pódio final' : 'Próxima questão'}</button><button class="btn btn-danger" data-command="finish">Encerrar quiz</button>`;
   if (room.phase === 'finished') actions = `<button class="btn btn-light" id="back-dashboard">Voltar ao painel</button>`;
-  return `<div class="control-dock"><div class="control-status"><strong>${escapeHtml(room.quizTitle)}</strong><small>${room.participantCount} presentes · ${room.responseCount} respostas</small></div><div class="control-actions">${actions}</div></div>`;
+  return `<div class="control-dock"><div class="control-status"><strong>${escapeHtml(room.quizTitle)}</strong><small>${room.phase === 'lobby' ? `${room.readyCount || 0}/${room.participantCount} prontos` : `${room.participantCount} presentes · ${room.responseCount} respostas`}</small></div><div class="control-actions">${actions}</div></div>`;
 }
 
 function bindPresenterControls(room) {
@@ -925,11 +1060,13 @@ function bindPresenterControls(room) {
 }
 
 async function openScreen(roomCode) {
+  state.roomRole = 'screen';
   try {
     const result = await api('/api/screen/join', { roomCode });
     state.room = result.state;
     openRoomEvents('screen', roomCode);
     renderScreenState();
+    showAudioGate();
   } catch (error) {
     app.innerHTML = `<div class="wait-screen"><div class="wait-card"><h1>Sala não encontrada</h1><p>${escapeHtml(error.message)}</p><a class="btn btn-light" href="/">Voltar</a></div></div>`;
   }
@@ -940,8 +1077,11 @@ function renderScreenState() {
   const room = state.room;
   syncMusic(room);
   if (room.phase === 'lobby') {
-    app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage text-center"><div class="eyebrow" style="margin:auto;background:rgba(255,255,255,.14);color:white">Entre na sala</div><div class="lobby-code">${room.roomCode}</div><div id="screen-qr" class="qr-wrap" style="margin:24px auto"></div><h2>${room.participantCount}/${room.maxParticipants} participantes</h2></main></div>`;
-    renderQr('screen-qr', room.joinUrl, 280);
+    app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage screen-lobby"><div class="screen-code-block"><span>Entre na sala</span><div class="lobby-code">${room.roomCode}</div><div id="screen-qr" class="qr-wrap compact-qr"></div></div><div class="screen-ready-block"><strong>${room.readyCount || 0}/${room.participantCount}</strong><span>participantes prontos</span><div class="ready-meter"><span style="width:${room.participantCount ? Math.round((room.readyCount || 0) / room.participantCount * 100) : 0}%"></span></div></div></main></div>`;
+    renderQr('screen-qr', room.joinUrl, 240);
+  } else if (room.phase === 'countdown') {
+    app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}${openingCountdownMarkup(room, 'presenter')}</div>`;
+    startOpeningCountdown(room);
   } else if (room.phase === 'question') {
     app.innerHTML = `<div class="presenter-shell">${presenterHeader(room)}<main class="presenter-stage"><div class="question-top"><span>Pergunta ${room.currentQuestionIndex + 1}/${room.totalQuestions}</span><div id="timer" class="timer">${room.question.timeLimit}</div><span>${room.responseCount}/${room.participantCount} respostas</span></div><h1 class="question-title">${escapeHtml(room.question.text)}</h1><div class="answers-grid">${room.question.options.map((option) => `<div class="answer-card"><span class="shape"></span>${escapeHtml(option)}</div>`).join('')}</div></main></div>`;
     startCountdown(room);
