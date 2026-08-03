@@ -1,12 +1,24 @@
-# Atualização NZN Quiz 6.8.4
+# Atualização NZN Quiz 6.8.5
 
-Esta versão substitui o menu lateral do painel por uma navegação superior responsiva.
+Substitua na raiz do repositório:
 
-## Arquivos
-Substitua na raiz do GitHub:
 - `server.js`
 - `package.json`
 
-Depois, no Render, use **Manual Deploy → Clear build cache & deploy**.
+O logo está incorporado no `server.js`. O arquivo `logo-nzn.png` é apenas uma cópia para consulta.
 
-Confirme em `/health` se aparece `version: 6.8.4`.
+Depois, no Render:
+
+1. Abra o serviço correto.
+2. Clique em **Manual Deploy**.
+3. Escolha **Clear build cache & deploy**.
+4. Aguarde o status **Live**.
+5. Confira `/health` e confirme a versão `6.8.5`.
+
+## Regras desta versão
+
+- Instrutores visualizam somente os quizzes criados pela própria conta.
+- ADM Masters visualizam todos os quizzes e o nome de quem criou cada um.
+- Instrutores não conseguem iniciar, editar ou excluir quizzes de outras contas, mesmo enviando o ID manualmente.
+- Botões principais usam preto e branco.
+- O logo NZN não possui fundo nem o texto “Soluções Tecnológicas”.

@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.4",
+  "version": "6.8.5",
   "private": true,
-  "description": "NZN Quiz corporativo com painel administrativo reorganizado em menu superior responsivo.",
+  "description": "NZN Quiz corporativo com quizzes privados por criador, botões monocromáticos e logo transparente.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
