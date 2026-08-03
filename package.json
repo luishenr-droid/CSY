@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.4.0",
+  "version": "6.5.0",
   "private": true,
-  "description": "NZN Quiz corporativo em tempo real com cadastro por e-mail, avatares e pódio animado.",
+  "description": "NZN Quiz corporativo em tempo real com gestão de usuários Master e Instrutor.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
