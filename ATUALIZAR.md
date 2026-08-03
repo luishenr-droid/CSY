@@ -1,23 +1,18 @@
-# Atualização NZN Quiz 6.8.1
+# Atualização NZN Quiz 6.8.2
 
-Esta atualização corrige somente a tela final:
-
-- pódio maior e com bases mais altas;
-- avatares e nomes dos vencedores em maior destaque;
-- pódio centralizado na área útil;
-- botão "Voltar ao painel" pequeno e centralizado;
-- texto auxiliar removido da tela final;
-- adaptação para telas menores sem cobrir o pódio.
-
-## Publicação
-
-Substitua na raiz do GitHub:
+Substitua na raiz do repositório:
 
 - `server.js`
 - `package.json`
 
-Depois, no Render, use:
+Depois, no Render, use **Manual Deploy → Clear build cache & deploy**.
 
-`Manual Deploy → Clear build cache & deploy`
+## Alterações
 
-Confirme em `/health` se aparece a versão `6.8.1`.
+- Removida a opção de tema claro/escuro.
+- Aplicado tema único de alto contraste em todas as telas.
+- Removido o logo da contagem regressiva inicial.
+- O botão **Voltar ao painel** agora fica no rodapé, dentro da mesma barra de controle da apresentação.
+- Pódio ampliado e centralizado na área restante da tela, sem sobreposição do rodapé.
+
+Confirme em `/health` se a versão exibida é `6.8.2`.
