@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.6.0",
+  "version": "6.7.0",
   "private": true,
-  "description": "NZN Quiz corporativo com gestão de usuários, perguntas de segurança e apresentações em tempo real.",
+  "description": "NZN Quiz corporativo com tema claro, gestão de usuários, recuperação por pergunta de segurança e relatórios no painel.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
