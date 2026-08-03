@@ -1,20 +1,28 @@
-QUIZ CREDSYSTEM — ATUALIZAÇÃO V6
+NZN QUIZ — ATUALIZAÇÃO 6.3
 
-Para atualizar o projeto que já está no GitHub:
+Envie para a raiz do GitHub somente:
+1. server.js
+2. package.json
 
-1. Envie para a raiz do repositório somente estes dois arquivos:
-   - server.js
-   - package.json
+O server.js já contém o layout, o logo, as músicas e todos os arquivos do site.
 
-2. Confirme a substituição dos arquivos antigos e faça o Commit changes.
+Depois, no Render:
+Manual Deploy > Clear build cache & deploy
 
-3. O Render deverá fazer um novo deploy automaticamente.
-   Se não fizer: Manual Deploy > Clear build cache & deploy.
+Confirme em:
+https://SEU-SITE.onrender.com/health
 
-4. Não altere o Build Command nem o Start Command:
-   Build Command: npm install
-   Start Command: npm start
+A versão deve aparecer como 6.3.0.
 
-5. A aplicação funciona sem banco de dados, mas novos administradores,
-   quizzes e resultados ficam temporários e podem sumir quando o Render reiniciar.
-   Para salvar permanentemente, siga CONFIGURAR_BANCO_RENDER.md.
+ALTERAÇÕES:
+- Contagem inicial com o mesmo suspense visual do ranking.
+- Campo Apelido removido; participante informa somente Nome.
+- Avatar pode ser alterado na sala enquanto o participante não estiver pronto.
+- Logo NZN em gradiente Credsystem incorporado ao site.
+- Login administrativo por usuário; contas antigas também podem entrar com e-mail.
+- Cadastro de novos administradores com Nome, Usuário, E-mail e Senha.
+- Três trilhas chiptune originais em estilo arcade 16-bit.
+
+IMPORTANTE:
+Para que administradores e quizzes não desapareçam quando o Render reiniciar,
+configure um banco PostgreSQL e a variável DATABASE_URL.

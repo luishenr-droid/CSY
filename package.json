@@ -1,8 +1,8 @@
 {
-  "name": "quiz-credsystem",
-  "version": "6.2.0",
+  "name": "nzn-quiz",
+  "version": "6.3.0",
   "private": true,
-  "description": "Quiz corporativo responsivo com confirmação de pronto e contagem regressiva.",
+  "description": "Quiz corporativo em tempo real com identidade visual NZN e trilhas originais 16-bit.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
