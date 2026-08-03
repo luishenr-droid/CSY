@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.7.0",
+  "version": "6.8.0",
   "private": true,
-  "description": "NZN Quiz corporativo com tema claro, gestão de usuários, recuperação por pergunta de segurança e relatórios no painel.",
+  "description": "NZN Quiz corporativo com temas claro e escuro, pódio central sem rolagem, gestão de usuários, segurança e relatórios no painel.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
