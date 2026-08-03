@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.3.0",
+  "version": "6.4.0",
   "private": true,
-  "description": "Quiz corporativo em tempo real com identidade visual NZN e trilhas originais 16-bit.",
+  "description": "NZN Quiz corporativo em tempo real com cadastro por e-mail, avatares e pódio animado.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
