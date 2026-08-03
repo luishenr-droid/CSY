@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.3",
+  "version": "6.8.4",
   "private": true,
-  "description": "NZN Quiz corporativo com tema único de alto contraste, contagem regressiva sem logo e pódio centralizado com controle final no rodapé.",
+  "description": "NZN Quiz corporativo com painel administrativo reorganizado em menu superior responsivo.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

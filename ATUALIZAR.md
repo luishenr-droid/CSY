@@ -1,16 +1,12 @@
-# NZN Quiz 6.8.3 — suspense do campeão
+# Atualização NZN Quiz 6.8.4
 
-## Atualização
+Esta versão substitui o menu lateral do painel por uma navegação superior responsiva.
 
+## Arquivos
 Substitua na raiz do GitHub:
-
 - `server.js`
 - `package.json`
 
-No Render, execute **Manual Deploy → Clear build cache & deploy**.
+Depois, no Render, use **Manual Deploy → Clear build cache & deploy**.
 
-## Nova revelação do primeiro lugar
-
-Depois do terceiro e do segundo lugares, o sistema faz uma pausa maior, mostra **“Que rufem os tambores...”**, executa um efeito curto de rufar, revela o campeão e lança confetes coloridos pela tela.
-
-Confirme a versão em `/health`: `6.8.3`.
+Confirme em `/health` se aparece `version: 6.8.4`.
