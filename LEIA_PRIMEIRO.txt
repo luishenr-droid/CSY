@@ -1,0 +1,20 @@
+QUIZ CREDSYSTEM — ATUALIZAÇÃO V6
+
+Para atualizar o projeto que já está no GitHub:
+
+1. Envie para a raiz do repositório somente estes dois arquivos:
+   - server.js
+   - package.json
+
+2. Confirme a substituição dos arquivos antigos e faça o Commit changes.
+
+3. O Render deverá fazer um novo deploy automaticamente.
+   Se não fizer: Manual Deploy > Clear build cache & deploy.
+
+4. Não altere o Build Command nem o Start Command:
+   Build Command: npm install
+   Start Command: npm start
+
+5. A aplicação funciona sem banco de dados, mas novos administradores,
+   quizzes e resultados ficam temporários e podem sumir quando o Render reiniciar.
+   Para salvar permanentemente, siga CONFIGURAR_BANCO_RENDER.md.
