@@ -1,8 +1,8 @@
 {
   "name": "quiz-credsystem",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "private": true,
-  "description": "Quiz corporativo em tempo real com identidade visual inspirada na Credsystem.",
+  "description": "Quiz corporativo em tempo real com layout Credsystem simplificado e áudio desbloqueável.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

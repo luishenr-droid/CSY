@@ -1,30 +1,12 @@
-# Atualizar o projeto existente
+# Atualização 6.1 — música e layout simplificado
 
-## GitHub
+Envie para a raiz do repositório no GitHub:
 
-1. Extraia o ZIP.
-2. Abra seu repositório do quiz.
-3. Clique em **Add file > Upload files**.
-4. Arraste `server.js` e `package.json`.
-5. O GitHub avisará que os arquivos serão substituídos.
-6. Escreva no commit: `Atualizar layout e recursos do quiz`.
-7. Clique em **Commit changes**.
+- `server.js`
+- `package.json`
 
-## Render
+Substitua os arquivos existentes. Depois, no Render, use **Manual Deploy → Clear build cache & deploy**.
 
-O Render deve iniciar um deploy automaticamente.
+Quando o deploy ficar **Live**, abra `/health` e confirme `"version":"6.1.0"`.
 
-Caso não inicie:
-
-1. Abra o Web Service.
-2. Clique em **Manual Deploy**.
-3. Selecione **Clear build cache & deploy**.
-4. Aguarde o status **Live**.
-5. Atualize o site usando `Ctrl + F5`.
-
-## Não altere
-
-- Build Command: `npm install`
-- Start Command: `npm start`
-- Root Directory: vazio
-- Health Check: `/health`
+Na primeira abertura da apresentação, clique em **Ativar som**. Essa confirmação é necessária por regra dos navegadores.
