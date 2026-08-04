@@ -1,24 +1,52 @@
-# Atualização NZN Quiz 6.8.5
+# Atualização NZN Quiz 6.8.6
 
-Substitua na raiz do repositório:
+## O que mudou
 
-- `server.js`
-- `package.json`
+1. A Visão geral foi simplificada e agora mostra somente:
+   - total de quizzes criados;
+   - usuários ativos;
+   - usuários inativos.
 
-O logo está incorporado no `server.js`. O arquivo `logo-nzn.png` é apenas uma cópia para consulta.
+2. Cada quiz agora possui:
+   - Iniciar;
+   - Editar;
+   - Duplicar;
+   - Excluir.
 
-Depois, no Render:
+3. A exclusão exige confirmação e é permanente.
 
-1. Abra o serviço correto.
-2. Clique em **Manual Deploy**.
-3. Escolha **Clear build cache & deploy**.
-4. Aguarde o status **Live**.
-5. Confira `/health` e confirme a versão `6.8.5`.
+4. O campo “Explicação da resposta” foi removido do editor e das telas de resposta.
 
-## Regras desta versão
+5. Cada questão começa com três alternativas:
+   - alternativas 1 e 2 obrigatórias;
+   - alternativa 3 opcional;
+   - botão para adicionar novas alternativas;
+   - limite de seis alternativas por questão.
 
-- Instrutores visualizam somente os quizzes criados pela própria conta.
-- ADM Masters visualizam todos os quizzes e o nome de quem criou cada um.
-- Instrutores não conseguem iniciar, editar ou excluir quizzes de outras contas, mesmo enviando o ID manualmente.
-- Botões principais usam preto e branco.
-- O logo NZN não possui fundo nem o texto “Soluções Tecnológicas”.
+6. A logo não foi alterada nesta versão.
+
+## Como publicar
+
+1. No repositório do GitHub, substitua:
+   - `server.js`
+   - `package.json`
+
+2. Salve as alterações com um commit.
+
+3. No Render, abra o Web Service que está funcionando.
+
+4. Clique em:
+   - `Manual Deploy`
+   - `Clear build cache & deploy`
+
+5. Aguarde o status `Live`.
+
+6. Abra `/health` no final do endereço do site e confirme:
+
+```json
+"version": "6.8.6"
+```
+
+## Segurança
+
+A variável `DATABASE_URL` e outras senhas devem permanecer somente no painel Environment do Render. Não publique esses dados no GitHub.
