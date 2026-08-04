@@ -1,52 +1,49 @@
-# Atualização NZN Quiz 6.8.6
+# NZN Quiz 6.8.7
+
+## Arquivos para substituir no GitHub
+
+Substitua somente os arquivos da raiz do repositório:
+
+- `server.js`
+- `package.json`
+
+Depois faça o commit.
+
+## Publicar no Render
+
+No Web Service que está funcionando:
+
+1. Abra **Manual Deploy**.
+2. Escolha **Clear build cache & deploy**.
+3. Aguarde aparecer **Live**.
+4. Abra `/health` e confirme `"version":"6.8.7"`.
 
 ## O que mudou
 
-1. A Visão geral foi simplificada e agora mostra somente:
-   - total de quizzes criados;
-   - usuários ativos;
-   - usuários inativos.
+### Foto de perfil
 
-2. Cada quiz agora possui:
-   - Iniciar;
-   - Editar;
-   - Duplicar;
-   - Excluir.
+Em **Minha conta > Perfil e segurança**, o usuário pode enviar, trocar ou remover sua foto. São aceitos JPG, PNG e WEBP. A imagem é recortada automaticamente em formato quadrado e reduzida antes do envio.
 
-3. A exclusão exige confirmação e é permanente.
+A foto aparece no menu superior, no perfil e na lista de usuários do ADM Master.
 
-4. O campo “Explicação da resposta” foi removido do editor e das telas de resposta.
+### Ciclo de inatividade dos instrutores
 
-5. Cada questão começa com três alternativas:
-   - alternativas 1 e 2 obrigatórias;
-   - alternativa 3 opcional;
-   - botão para adicionar novas alternativas;
-   - limite de seis alternativas por questão.
+- Do dia 0 ao 29: perfil ativo.
+- No dia 30: perfil fica inativo automaticamente.
+- Do dia 30 ao 39: o próprio instrutor consegue reativar o perfil fazendo login com a senha correta.
+- Do dia 40 ao 44: somente o ADM Master consegue reativar.
+- No dia 45: o perfil do instrutor é excluído automaticamente.
+- Quando o ADM Master reativa o perfil, todos os prazos recomeçam do zero.
+- Contas ADM Master não entram nessa regra.
 
-6. A logo não foi alterada nesta versão.
+Somente o ADM Master vê, no painel de usuários, as datas de inativação, restrição ao Master e exclusão, além dos dias restantes.
 
-## Como publicar
+### Correção do botão Iniciar
 
-1. No repositório do GitHub, substitua:
-   - `server.js`
-   - `package.json`
+Ao clicar em **Iniciar**, a preparação da sala agora aparece na própria área de Quizzes. Depois de informar os prêmios, clique em **Criar sala e abrir apresentação**.
 
-2. Salve as alterações com um commit.
+## PostgreSQL
 
-3. No Render, abra o Web Service que está funcionando.
+A foto de perfil, os usuários e os prazos precisam do PostgreSQL conectado pela variável `DATABASE_URL` para permanecerem salvos após reinicializações do Render.
 
-4. Clique em:
-   - `Manual Deploy`
-   - `Clear build cache & deploy`
-
-5. Aguarde o status `Live`.
-
-6. Abra `/health` no final do endereço do site e confirme:
-
-```json
-"version": "6.8.6"
-```
-
-## Segurança
-
-A variável `DATABASE_URL` e outras senhas devem permanecer somente no painel Environment do Render. Não publique esses dados no GitHub.
+A atualização cria automaticamente as novas colunas necessárias no banco existente.
