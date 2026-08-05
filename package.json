@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.10",
+  "version": "6.8.11",
   "private": true,
-  "description": "NZN Quiz com fechamento automático do menu do perfil após selecionar Minha conta.",
+  "description": "NZN Quiz com lobby do participante mais claro, botão de pronto melhorado e seleção de 50 avatares.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
