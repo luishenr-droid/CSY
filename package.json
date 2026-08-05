@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.9",
+  "version": "6.8.10",
   "private": true,
-  "description": "NZN Quiz com menu de perfil por hover e correção de sobreposição no painel.",
+  "description": "NZN Quiz com fechamento automático do menu do perfil após selecionar Minha conta.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
