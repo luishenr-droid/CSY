@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.14",
+  "version": "6.8.15",
   "private": true,
-  "description": "NZN Quiz com tela de pronto sem mensagens duplicadas.",
+  "description": "NZN Quiz com sala de espera simplificada, status de participantes e expulsão pelo apresentador.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
