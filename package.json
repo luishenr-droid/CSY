@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.18",
+  "version": "6.8.19",
   "private": true,
-  "description": "NZN Quiz com torres destacadas, números animados e rótulos mais elegantes.",
+  "description": "NZN Quiz com barra de controle compacta e fixa durante a apresentação.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
