@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.15",
+  "version": "6.8.16",
   "private": true,
-  "description": "NZN Quiz com sala de espera simplificada, status de participantes e expulsão pelo apresentador.",
+  "description": "NZN Quiz com ranking top 5, alternativas em tons neutros e gráfico de torres na resposta.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
