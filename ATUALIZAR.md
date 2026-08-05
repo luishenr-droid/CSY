@@ -1,5 +1,5 @@
-# Atualização NZN Quiz 6.8.13
+# Atualização NZN Quiz 6.8.14
 
-- removido o botão separado de personalizar avatar antes de entrar na sala;
-- adicionada caneta/lápis no canto do avatar na tela de entrada;
-- mantém o mesmo comportamento de abrir a escolha de avatar ao tocar no lápis.
+- removidas as mensagens duplicadas na tela do participante quando ele marca como pronto;
+- mantido apenas o estado visual principal do botão/card;
+- o aviso em toast após marcar como pronto não aparece mais.
