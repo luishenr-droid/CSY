@@ -1,17 +1,24 @@
-# NZN Quiz 6.8.8
+# Atualização NZN Quiz 6.8.9
 
-## Alterações
+## O que mudou
 
-- A caixa do perfil no cabeçalho agora abre um menu suspenso ao passar o mouse, clicar ou navegar pelo teclado.
-- As opções **Minha conta** e **Sair** foram movidas para esse menu.
-- **Minha conta** foi retirada do menu principal.
-- Para Instrutores, a Visão geral mostra somente a quantidade de quizzes próprios.
-- Os números de usuários ativos e inativos ficam visíveis somente para o ADM Master.
-- O indicador técnico do banco de dados também fica visível somente para o ADM Master.
-- A logo não foi alterada.
+- o menu do perfil agora aparece ao passar o mouse sobre a caixa do usuário;
+- o dropdown fica acima da navegação e não é mais coberto;
+- a opção **Minha conta** e **Sair** continuam dentro do menu do perfil.
 
-## Atualização
+## Como atualizar
 
-1. Substitua `server.js` e `package.json` no GitHub.
-2. No Render, use **Manual Deploy → Clear build cache & deploy**.
-3. Confirme em `/health` que a versão é `6.8.8`.
+Substitua no GitHub:
+
+- server.js
+- package.json
+
+Depois, no Render:
+
+1. abra o serviço
+2. clique em **Manual Deploy**
+3. clique em **Clear build cache & deploy**
+
+## Confirmação
+
+Abra /health e confira: `"version": "6.8.9"`

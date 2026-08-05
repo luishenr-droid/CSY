@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.8",
+  "version": "6.8.9",
   "private": true,
-  "description": "NZN Quiz com menu suspenso de perfil e visão geral ajustada por permissão.",
+  "description": "NZN Quiz com menu de perfil por hover e correção de sobreposição no painel.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
