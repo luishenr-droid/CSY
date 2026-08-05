@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.17",
+  "version": "6.8.18",
   "private": true,
-  "description": "NZN Quiz com apresentação limpa, badges A/B/C, torres animadas e melhor contraste.",
+  "description": "NZN Quiz com torres destacadas, números animados e rótulos mais elegantes.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
