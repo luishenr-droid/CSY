@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.11",
+  "version": "6.8.12",
   "private": true,
-  "description": "NZN Quiz com lobby do participante mais claro, botão de pronto melhorado e seleção de 50 avatares.",
+  "description": "NZN Quiz com lobby do participante refinado, botão de pronto melhorado e avatares sem nomes repetidos.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
