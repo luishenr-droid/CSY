@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.12",
+  "version": "6.8.13",
   "private": true,
-  "description": "NZN Quiz com lobby do participante refinado, botão de pronto melhorado e avatares sem nomes repetidos.",
+  "description": "NZN Quiz com edição de avatar por lápis também na tela de entrada da sala.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

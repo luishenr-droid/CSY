@@ -1,7 +1,5 @@
-# Atualização NZN Quiz 6.8.12
+# Atualização NZN Quiz 6.8.13
 
-- removido o botão separado de personalizar avatar;
-- adicionada caneta/lápis no canto do avatar;
-- novo botão de pronto com visual mais bonito;
-- removida a contagem de pessoas conectadas;
-- biblioteca com até 50 avatares sem repetir nomes como Neon e Pulse.
+- removido o botão separado de personalizar avatar antes de entrar na sala;
+- adicionada caneta/lápis no canto do avatar na tela de entrada;
+- mantém o mesmo comportamento de abrir a escolha de avatar ao tocar no lápis.
