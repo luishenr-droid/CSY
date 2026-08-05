@@ -1,6 +1,6 @@
-# Atualização NZN Quiz 6.8.19
+# Atualização NZN Quiz 6.8.20
 
-- a barra de controle voltou a ser compacta;
-- fica fixa na parte inferior durante a apresentação;
-- não ocupa mais uma área grande da tela;
-- ranking, Top 5, gráficos e animações da versão anterior foram mantidos.
+- gráfico de respostas menor e mais distante da barra de controle;
+- pódio final centralizado, menor e visualmente equilibrado;
+- posições vazias do pódio ganharam um estado visual mais elegante;
+- barra de controle permanece compacta e fixa.

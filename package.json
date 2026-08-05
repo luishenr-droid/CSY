@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.19",
+  "version": "6.8.20",
   "private": true,
-  "description": "NZN Quiz com barra de controle compacta e fixa durante a apresentação.",
+  "description": "NZN Quiz com gráfico compacto e pódio final centralizado e refinado.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
