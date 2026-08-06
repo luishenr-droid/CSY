@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.20",
+  "version": "6.9.0",
   "private": true,
-  "description": "NZN Quiz com gráfico compacto e pódio final centralizado e refinado.",
+  "description": "NZN Quiz com redesign completo do painel, FAQ, suporte interno e notificações.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
