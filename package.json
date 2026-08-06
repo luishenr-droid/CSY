@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.21",
+  "version": "6.8.22",
   "private": true,
-  "description": "NZN Quiz 6.8.20 com FAQ, suporte interno, respostas do ADM Master e notificações no topo e menu do perfil.",
+  "description": "NZN Quiz 6.8.20 com FAQ e suporte, notificações no perfil, gestão detalhada de usuários e dashboard completo de resultados.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
