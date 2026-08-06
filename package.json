@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.22",
+  "version": "6.8.20",
   "private": true,
-  "description": "NZN Quiz com login limpo inspirado na 6.9.0, mantendo a essência visual da 6.8.20.",
+  "description": "NZN Quiz com gráfico compacto e pódio final centralizado e refinado.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
