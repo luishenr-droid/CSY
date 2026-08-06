@@ -1,26 +1,38 @@
-# NZN Quiz 6.9.2 — Apresentador, ranking e pódio
+# NZN Quiz 6.8.21 — Refresh visual da versão 6.8.20
 
-Nesta versão, o novo padrão visual foi aplicado às telas da apresentação:
+Esta versão preserva a estrutura e o fluxo visual da versão 6.8.20.
 
-- sala de espera do apresentador;
-- tela da pergunta;
-- revelação da resposta e gráfico;
-- ranking Top 5;
-- pódio final;
-- tela de projeção sem controles;
-- barra de controle compacta preservada.
+## O que mudou
 
-## Atualização
+- nova paleta em preto, branco e azul escuro;
+- cores atualizadas no painel, login, salas, apresentação, ranking e pódio;
+- alternativas do quiz em diferentes tons de azul escuro;
+- barra de controle compacta preservada;
+- FAQ e suporte interno mantidos;
+- notificações de novas mensagens para ADM Master e Instrutor;
+- banco PostgreSQL e dados atuais preservados.
+
+## Como atualizar
 
 Substitua no GitHub:
 
 - `server.js`
 - `package.json`
 
-No Render, use **Manual Deploy → Clear build cache & deploy**.
+Depois, no Render:
 
-Depois confira `/health` e valide:
+1. Abra o serviço.
+2. Clique em **Manual Deploy**.
+3. Selecione **Clear build cache & deploy**.
+
+## Verificação
+
+Abra `/health` e confirme:
 
 ```json
-"version": "6.9.2"
+{
+  "version": "6.8.21",
+  "persistenceMode": "postgres",
+  "storeReady": true
+}
 ```

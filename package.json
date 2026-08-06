@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.9.2",
+  "version": "6.8.21",
   "private": true,
-  "description": "NZN Quiz com redesign completo das telas do apresentador, ranking, pódio e projeção.",
+  "description": "NZN Quiz com FAQ, suporte e nova paleta preto, branco e azul escuro, preservando a essência visual da versão 6.8.20.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
