@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.9.0",
+  "version": "6.9.2",
   "private": true,
-  "description": "NZN Quiz com redesign completo do painel, FAQ, suporte interno e notificações.",
+  "description": "NZN Quiz com redesign completo das telas do apresentador, ranking, pódio e projeção.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

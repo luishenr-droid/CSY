@@ -1,16 +1,14 @@
-# NZN Quiz 6.9.0
+# NZN Quiz 6.9.2 — Apresentador, ranking e pódio
 
-Esta versão inclui:
+Nesta versão, o novo padrão visual foi aplicado às telas da apresentação:
 
-- redesign completo do painel administrativo;
-- navegação lateral moderna e responsiva;
-- Central de Ajuda com FAQ;
-- criação e edição de FAQ pelo ADM Master;
-- chamados de dúvida, sugestão e problema;
-- respostas dentro da plataforma;
-- status Novo, Em análise, Respondido e Encerrado;
-- notificações para ADM Masters e para instrutores quando houver resposta;
-- persistência completa no PostgreSQL configurado em `DATABASE_URL`.
+- sala de espera do apresentador;
+- tela da pergunta;
+- revelação da resposta e gráfico;
+- ranking Top 5;
+- pódio final;
+- tela de projeção sem controles;
+- barra de controle compacta preservada.
 
 ## Atualização
 
@@ -19,16 +17,10 @@ Substitua no GitHub:
 - `server.js`
 - `package.json`
 
-Depois, no Render, use **Manual Deploy → Clear build cache & deploy**.
+No Render, use **Manual Deploy → Clear build cache & deploy**.
 
-## Confirmação
-
-Acesse `/health` e confirme:
+Depois confira `/health` e valide:
 
 ```json
-"version": "6.9.0",
-"persistenceMode": "postgres",
-"storeReady": true
+"version": "6.9.2"
 ```
-
-As novas tabelas de FAQ e suporte são criadas automaticamente no primeiro deploy.
