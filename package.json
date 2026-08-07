@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.30",
+  "version": "6.8.31",
   "private": true,
-  "description": "NZN Quiz com home por módulos, listas compactas, editor didático, FAQ e suporte separados, tema claro/escuro e proteção contra relatórios vazios.",
+  "description": "NZN Quiz com painel mais limpo, criação de usuário separada, notificação no módulo Suporte e tema fixo claro.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

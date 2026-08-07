@@ -1,17 +1,27 @@
-# NZN Quiz 6.8.30
+# NZN Quiz 6.8.31
+
+Base: NZN 6.8.30.
 
 ## Alterações
 
-- tela inicial do painel agora mostra os módulos centralizados;
-- menu superior fica oculto apenas na tela inicial e reaparece ao acessar um módulo;
-- FAQ e Suporte agora são páginas separadas;
-- listas de Quizzes, Resultados e Usuários mostram 5 itens por padrão, com botão para ver todos;
-- editor de quiz reorganizado em formato mais limpo e didático, com questões recolhíveis e capa opcional;
-- proteção reforçada para não salvar nem listar relatórios sem respostas;
-- opção de tema claro e escuro com preferência salva no navegador.
+- removida a opção de tema claro/escuro; o NZN volta a usar somente o tema claro;
+- removidos os pequenos rótulos indicados pelas linhas vermelhas no PDF;
+- removidos os atalhos "Ir para suporte" e "Abrir FAQ" das páginas de FAQ e Suporte;
+- a notificação deixou de aparecer na foto de perfil e no menu superior;
+- novas mensagens aparecem como uma bolinha vermelha no módulo Suporte da tela inicial;
+- criação de usuário e lista de usuários foram separadas;
+- novo módulo "Criar usuário" aparece na tela inicial somente para ADM Master;
+- o módulo "Usuários" agora mostra apenas indicadores, filtros e a lista de perfis.
 
 ## Atualização
 
-Substitua `server.js` e `package.json` no GitHub e faça `Manual Deploy > Clear build cache & deploy` no Render.
+Substitua no GitHub:
 
-Confira `/health` e confirme `version: 6.8.30`.
+- `server.js`
+- `package.json`
+
+No Render:
+
+**Manual Deploy -> Clear build cache & deploy**
+
+Depois confira `/health`. A versão deve ser `6.8.31`.
