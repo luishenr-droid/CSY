@@ -1,14 +1,32 @@
-# NZN Quiz 6.8.23
+# NZN Quiz 6.8.24
 
-Correção pontual da versão 6.8.22:
+Atualização baseada diretamente na versão 6.8.23.
 
-- restaura a foto do usuário no card do perfil no celular;
-- mantém a bolinha de notificação sobre a foto;
-- preserva FAQ, suporte, gestão de usuários e dashboard de resultados;
-- nenhuma outra tela ou função foi alterada.
+## Alterações
 
-## Atualização
+1. Resultados
+   - removido o botão Excel da lista de resultados;
+   - o botão Baixar Excel permanece dentro da página do resultado;
+   - início e finalização foram substituídos por uma única informação de data e horário do quiz;
+   - duração, participantes, questões, gráficos e lista de participantes permanecem no dashboard.
 
-Substitua `server.js` e `package.json` no GitHub. Depois use **Manual Deploy → Clear build cache & deploy** no Render.
+2. Usuários
+   - removidas da lista as colunas Último acesso e Prazos;
+   - essas informações continuam disponíveis dentro do perfil;
+   - adicionada opção Excluir perfil somente para ADM Master;
+   - não é permitido excluir a própria conta conectada;
+   - o sistema protege o último ADM Master ativo.
 
-Confirme em `/health` que a versão exibida é `6.8.23`.
+3. Quizzes
+   - nova lista horizontal mais simples e organizada;
+   - mostra título, descrição, quantidade de questões, criador e atualização;
+   - mantém Iniciar, Editar, Duplicar e Excluir;
+   - editor e funcionamento dos quizzes não foram alterados.
+
+## Atualização no Render
+
+Substitua `server.js` e `package.json` no GitHub e faça:
+
+Manual Deploy → Clear build cache & deploy
+
+Depois confirme `/health` com a versão `6.8.24`.
