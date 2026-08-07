@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.31",
+  "version": "6.8.32",
   "private": true,
-  "description": "NZN Quiz com painel mais limpo, criação de usuário separada, notificação no módulo Suporte e tema fixo claro.",
+  "description": "NZN Quiz com editor guiado e limpo, menu superior com Criar usuário e perfil simplificado.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
