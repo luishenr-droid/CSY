@@ -1,0 +1,16 @@
+{
+  "name": "nzn-quiz",
+  "version": "6.8.25",
+  "private": true,
+  "description": "NZN Quiz com capacidade configurada para até 500 participantes por sala e otimizações de atualização em tempo real.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "^8.22.0"
+  }
+}
