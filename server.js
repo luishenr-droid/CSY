@@ -2344,7 +2344,7 @@ async function handleApi(req, res, pathname) {
     const canSupport = hasModuleAccess(session.admin, 'support');
     const faqs = canFaq ? await store.listFaqs() : [];
     const tickets = canSupport ? await store.listSupportTickets(session.admin) : [];
-    const unreadCount = canSupport ? await store.getSupportUnreadCount(session.admin) : 0;
+    const unreadCount = canSupport ? await store.supportUnreadCount(session.admin) : 0;
     return json(res, 200, { ok: true, faqs, tickets, unreadCount, canManageFaq: canFaq && isMasterRole(session.admin.role), modulePermissions: adminModulePermissions(session.admin) });
   }
 
@@ -3094,7 +3094,7 @@ function serveStatic(req, res, pathname) {
     'Content-Type': file.type,
     'Cache-Control': 'no-store, max-age=0',
     'Pragma': 'no-cache',
-    'X-Quiz-Version': '6.8.36',
+    'X-Quiz-Version': '6.8.37',
   });
   res.end(file.data);
 }
@@ -3120,7 +3120,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, {
       ok: !storeInitError,
       app: 'NZN Quiz',
-      version: '6.8.36',
+      version: '6.8.37',
       persistenceMode: store.mode,
       storeReady,
       rooms: rooms.size,

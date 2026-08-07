@@ -1,17 +1,20 @@
-# NZN Quiz 6.8.36
+# NZN Quiz 6.8.37 — Hotfix de login
 
-## Novidades
+Correção pontual sobre a versão 6.8.36.
 
-- ADM Master escolhe quais módulos cada Instrutor pode acessar.
-- ADM Master define o limite de participantes por sala de cada Instrutor, de 10 a 500.
-- Usuários podem alterar o próprio e-mail sem alterar o usuário/login criado inicialmente.
-- Biblioteca de conteúdos agora aceita Quiz e Nuvem de Palavras.
-- Nuvem de Palavras possui pergunta aberta, limite de 1 a 5 palavras por participante e revelação em tempo real.
-- Nuvem de Palavras não gera pontos, ranking ou pódio.
-- Resultados de nuvem exibem a nuvem consolidada e a lista de respostas.
+## Corrigido
+
+- Corrigida a chamada do contador de notificações de suporte que causava `TypeError: store.getSupportUnreadCount is not a function` após o login.
+- A função correta `supportUnreadCount()` já existia no DataStore; o endpoint estava chamando o nome errado.
+- Nenhuma funcionalidade da 6.8.36 foi removida ou redesenhada.
 
 ## Atualização
 
-Substitua `server.js` e `package.json` no GitHub e faça **Manual Deploy → Clear build cache & deploy** no Render.
+Substitua no GitHub:
 
-As novas colunas do PostgreSQL são criadas automaticamente no primeiro deploy.
+- `server.js`
+- `package.json`
+
+Depois no Render: **Manual Deploy → Clear build cache & deploy**.
+
+Confirme em `/health` que a versão é `6.8.37`.
