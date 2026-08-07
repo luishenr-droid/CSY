@@ -1,28 +1,17 @@
-# NZN Quiz 6.8.35 — Refinamento visual experimental
+# NZN Quiz 6.8.36
 
-Base: NZN 6.8.34.
+## Novidades
 
-## O que foi refinado
-- tela inicial e módulos;
-- login e telas de acesso;
-- biblioteca de quizzes;
-- editor de quiz mais didático e sem ações flutuantes;
-- criação e gestão de usuários;
-- perfil do usuário e Minha conta;
-- FAQ;
-- Suporte;
-- Apoie o NZN e Apoios recebidos.
-
-## Preservado
-- apresentação ao vivo;
-- telas de resultados;
-- ranking e pódio;
-- regras de pontuação;
-- limite de 500 participantes;
-- banco de dados e integrações já existentes.
+- ADM Master escolhe quais módulos cada Instrutor pode acessar.
+- ADM Master define o limite de participantes por sala de cada Instrutor, de 10 a 500.
+- Usuários podem alterar o próprio e-mail sem alterar o usuário/login criado inicialmente.
+- Biblioteca de conteúdos agora aceita Quiz e Nuvem de Palavras.
+- Nuvem de Palavras possui pergunta aberta, limite de 1 a 5 palavras por participante e revelação em tempo real.
+- Nuvem de Palavras não gera pontos, ranking ou pódio.
+- Resultados de nuvem exibem a nuvem consolidada e a lista de respostas.
 
 ## Atualização
+
 Substitua `server.js` e `package.json` no GitHub e faça **Manual Deploy → Clear build cache & deploy** no Render.
 
-## Voltar para a versão anterior
-Se não gostar do visual, basta restaurar os arquivos da versão 6.8.34 e fazer novo deploy.
+As novas colunas do PostgreSQL são criadas automaticamente no primeiro deploy.

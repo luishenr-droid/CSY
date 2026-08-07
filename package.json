@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.35",
+  "version": "6.8.36",
   "private": true,
-  "description": "NZN Quiz com refinamento visual experimental das telas administrativas, mantendo apresentação, resultados e pódio preservados.",
+  "description": "NZN Quiz com permissões por módulo, limite de participantes por instrutor, e-mail editável e nuvem de palavras.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
