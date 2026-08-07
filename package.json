@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.27",
+  "version": "6.8.28",
   "private": true,
-  "description": "NZN Quiz com correção da revelação do pódio final, mantendo suspense sem antecipação dos vencedores.",
+  "description": "NZN Quiz com pódio simplificado, listas de resultados compactas e início direto do quiz.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

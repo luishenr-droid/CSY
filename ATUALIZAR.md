@@ -1,17 +1,13 @@
-# NZN Quiz 6.8.27 — Correção do pódio final
+# NZN Quiz 6.8.28
 
-Esta versão corrige exclusivamente a revelação do pódio da 6.8.26.
+## Alterações
 
-- vencedores continuam ocultos antes da hora;
-- 3º lugar aparece primeiro;
-- 2º lugar aparece em seguida;
-- 1º lugar é revelado após "Que rufem os tambores";
-- corrigido o problema que deixava o pódio invisível;
-- animação interna suave, sem tremor;
-- limite de 500 participantes por sala preservado;
-- FAQ, suporte, usuários e dashboards de resultados preservados.
+- 1º, 2º e 3º lugar agora aparecem dentro dos blocos do pódio, substituindo as medalhas;
+- lista de resultados mostra aproximadamente 10 registros por vez, mantendo os anteriores acessíveis por rolagem;
+- lista de participantes no resultado individual mostra aproximadamente 10 pessoas por vez;
+- botão **Iniciar** cria a sala imediatamente e abre a apresentação, sem a etapa intermediária;
+- limite de 500 participantes por sala preservado.
 
 ## Atualização
-Substitua `server.js` e `package.json` no GitHub e faça **Manual Deploy → Clear build cache & deploy** no Render.
 
-Confira `/health`: versão `6.8.27`.
+Substitua `server.js` e `package.json` no GitHub. Depois, no Render, use **Manual Deploy → Clear build cache & deploy**.
