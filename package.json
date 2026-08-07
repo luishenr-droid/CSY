@@ -1,16 +1,9 @@
 {
-  "name": "nzn-quiz",
-  "version": "6.8.25",
+  "name": "nzn-simulador-carga",
+  "version": "1.0.0",
   "private": true,
-  "description": "NZN Quiz com capacidade configurada para até 500 participantes por sala e otimizações de atualização em tempo real.",
+  "description": "Simulador protegido para testes de até 500 participantes virtuais no NZN Quiz.",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": ">=20"
-  },
-  "dependencies": {
-    "pg": "^8.22.0"
-  }
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
 }
