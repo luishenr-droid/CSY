@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.34",
+  "version": "6.8.35",
   "private": true,
-  "description": "NZN Quiz 6.8.34 com módulo Apoie/Apoios refinado, filtros e perfis redesenhados.",
+  "description": "NZN Quiz com refinamento visual experimental das telas administrativas, mantendo apresentação, resultados e pódio preservados.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
