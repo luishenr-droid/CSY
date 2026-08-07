@@ -1,32 +1,14 @@
-# NZN Quiz 6.8.24
-
-Atualização baseada diretamente na versão 6.8.23.
+# NZN Quiz 6.8.25
 
 ## Alterações
+- limite ampliado para 500 participantes por sala;
+- atualizações de lobby agrupadas para reduzir carga quando muitas pessoas entram ao mesmo tempo;
+- respostas em tempo real agrupadas para o apresentador;
+- listas completas de participantes deixam de ser enviadas aos celulares dos participantes, reduzindo tráfego;
+- fluxo, telas e regras da 6.8.24 preservados.
 
-1. Resultados
-   - removido o botão Excel da lista de resultados;
-   - o botão Baixar Excel permanece dentro da página do resultado;
-   - início e finalização foram substituídos por uma única informação de data e horário do quiz;
-   - duração, participantes, questões, gráficos e lista de participantes permanecem no dashboard.
+## Atualização
+Substitua `server.js` e `package.json` no GitHub e faça **Clear build cache & deploy** no Render.
 
-2. Usuários
-   - removidas da lista as colunas Último acesso e Prazos;
-   - essas informações continuam disponíveis dentro do perfil;
-   - adicionada opção Excluir perfil somente para ADM Master;
-   - não é permitido excluir a própria conta conectada;
-   - o sistema protege o último ADM Master ativo.
-
-3. Quizzes
-   - nova lista horizontal mais simples e organizada;
-   - mostra título, descrição, quantidade de questões, criador e atualização;
-   - mantém Iniciar, Editar, Duplicar e Excluir;
-   - editor e funcionamento dos quizzes não foram alterados.
-
-## Atualização no Render
-
-Substitua `server.js` e `package.json` no GitHub e faça:
-
-Manual Deploy → Clear build cache & deploy
-
-Depois confirme `/health` com a versão `6.8.24`.
+## Importante
+500 é o limite configurado. A capacidade real do plano do Render deve ser validada com o simulador de carga fornecido separadamente.

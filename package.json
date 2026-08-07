@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.24",
+  "version": "6.8.25",
   "private": true,
-  "description": "NZN Quiz com resultados simplificados, gestão de usuários com exclusão e biblioteca de quizzes renovada.",
+  "description": "NZN Quiz com capacidade configurada para até 500 participantes por sala e otimizações de atualização em tempo real.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
