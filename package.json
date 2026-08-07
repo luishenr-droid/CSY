@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.26",
+  "version": "6.8.27",
   "private": true,
-  "description": "NZN Quiz com correção da animação do pódio: vencedores ocultos até a revelação e animação estável.",
+  "description": "NZN Quiz com correção da revelação do pódio final, mantendo suspense sem antecipação dos vencedores.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
