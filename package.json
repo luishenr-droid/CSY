@@ -1,9 +1,0 @@
-{
-  "name": "nzn-simulador-carga",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Simulador protegido para testes de até 500 participantes virtuais no NZN Quiz.",
-  "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=20" }
-}
