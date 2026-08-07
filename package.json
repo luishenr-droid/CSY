@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.25",
+  "version": "6.8.26",
   "private": true,
-  "description": "NZN Quiz com capacidade configurada para até 500 participantes por sala e otimizações de atualização em tempo real.",
+  "description": "NZN Quiz com correção da animação do pódio: vencedores ocultos até a revelação e animação estável.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
