@@ -2,7 +2,7 @@
   "name": "nzn-quiz",
   "version": "6.8.33",
   "private": true,
-  "description": "NZN Quiz com módulo Apoie o NZN integrado ao Checkout PagBank, protocolos e painel de apoios recebidos.",
+  "description": "NZN Quiz 6.8.33 com módulo Apoie o NZN via PagBank, disponível por Pix e boleto.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
