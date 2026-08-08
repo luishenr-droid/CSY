@@ -2330,7 +2330,7 @@ async function handleApi(req, res, pathname) {
         payment_methods: [{ type: paymentMethod }],
         redirect_url: returnUrl,
         return_url: returnUrl,
-        redirect_waiting_time: 3,
+        redirect_waiting_time: 15,
         notification_urls: [webhookUrl],
         payment_notification_urls: [webhookUrl],
       };
@@ -3121,7 +3121,7 @@ function serveStatic(req, res, pathname) {
     'Content-Type': file.type,
     'Cache-Control': 'no-store, max-age=0',
     'Pragma': 'no-cache',
-    'X-Quiz-Version': '6.8.38',
+    'X-Quiz-Version': '6.8.39',
   });
   res.end(file.data);
 }
@@ -3147,7 +3147,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, {
       ok: !storeInitError,
       app: 'NZN Quiz',
-      version: '6.8.38',
+      version: '6.8.39',
       persistenceMode: store.mode,
       storeReady,
       rooms: rooms.size,
