@@ -1,8 +1,8 @@
 {
   "name": "nzn-quiz",
-  "version": "6.8.37",
+  "version": "7.0.0",
   "private": true,
-  "description": "NZN Quiz 6.8.37 hotfix do contador de notificações de suporte no login.",
+  "description": "NZN 7.0 — redesign completo da experiência, mantendo a base funcional 6.8.37.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
