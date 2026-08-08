@@ -1,0 +1,23 @@
+NZN QUIZ 6.10.0 - ATUALIZACAO PONTUAL
+
+Este pacote serve para atualizar a versao 6.9.2 sem reenviar o projeto inteiro.
+
+O QUE ENVIAR AO GITHUB
+
+1. Abra o repositorio atual.
+2. Substitua somente o arquivo server.js da raiz pelo server.js deste pacote.
+3. Confirme a alteracao (commit).
+4. Aguarde o novo deploy do Render.
+5. Abra /health e confira se aparece a versao 6.10.0.
+
+Nao altere as variaveis do Render e nao recrie o banco de dados.
+
+NOVIDADES
+
+- Apoio dividido entre escolha, pagamento e historico.
+- Editor de quiz dividido em Informacoes e Perguntas.
+- Editor de nuvem dividido em Informacoes e Pergunta.
+- Duplicar e excluir reunidos no menu de tres pontos.
+- Apresentacao, participante, ranking e podio preservados.
+
+Se precisar criar um GitHub do zero, use o ZIP de BACKUP COMPLETO, nao este pacote pontual.
