@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: nzn-quiz
+    runtime: node
+    plan: free
+    region: virginia
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nzn-quiz-db
+          property: connectionString
+      - key: PASSWORD_VAULT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: PAGBANK_TOKEN
+        sync: false
+      - key: PAGBANK_ENV
+        value: sandbox
+      - key: PAGBANK_WEBHOOK_VERIFICATION
+        value: auto
+
+databases:
+  - name: nzn-quiz-db
+    plan: free
+    region: virginia
+    databaseName: nzn_quiz
+    user: nzn_quiz_user

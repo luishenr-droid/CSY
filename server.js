@@ -41,10 +41,23 @@ const PASSWORD_VAULT_SECRET = String(process.env.PASSWORD_VAULT_SECRET || DATABA
 const MAX_SUPPORT_SUBJECT_LENGTH = 160;
 const MAX_SUPPORT_MESSAGE_LENGTH = 4000;
 const SUPPORT_TICKET_LIMIT = 250;
-const PAGBANK_TOKEN = String(process.env.PAGBANK_TOKEN || '').trim();
+const PAGBANK_TOKEN_RAW = String(process.env.PAGBANK_TOKEN || '').trim();
+const PAGBANK_TOKEN = PAGBANK_TOKEN_RAW
+  .replace(/^Bearer\s+/i, '')
+  .replace(/^(["'])(.*)\1$/, '$2')
+  .trim();
 const PAGBANK_ENV = String(process.env.PAGBANK_ENV || 'sandbox').trim().toLowerCase() === 'production' ? 'production' : 'sandbox';
 const PAGBANK_API_BASE = PAGBANK_ENV === 'production' ? 'https://api.pagseguro.com' : 'https://sandbox.api.pagseguro.com';
-const PAGBANK_VERIFY_WEBHOOK = String(process.env.PAGBANK_VERIFY_WEBHOOK || 'true').trim().toLowerCase() !== 'false';
+const PAGBANK_WEBHOOK_VERIFICATION = (() => {
+  const hasCurrentSetting = Object.prototype.hasOwnProperty.call(process.env, 'PAGBANK_WEBHOOK_VERIFICATION');
+  const requested = String(process.env.PAGBANK_WEBHOOK_VERIFICATION || 'auto').trim().toLowerCase();
+  if (['required', 'optional', 'disabled'].includes(requested)) return requested;
+  if (hasCurrentSetting && requested === 'auto') return PAGBANK_ENV === 'production' ? 'required' : 'optional';
+  if (Object.prototype.hasOwnProperty.call(process.env, 'PAGBANK_VERIFY_WEBHOOK')) {
+    return String(process.env.PAGBANK_VERIFY_WEBHOOK).trim().toLowerCase() === 'false' ? 'disabled' : 'required';
+  }
+  return PAGBANK_ENV === 'production' ? 'required' : 'optional';
+})();
 const DONATION_MIN_CENTS = 200;
 const DONATION_MAX_CENTS = 1_000_000;
 const DONATION_LIST_LIMIT = 250;
@@ -378,11 +391,20 @@ async function pagBankRequest(pathname, { method = 'GET', body = null, idempoten
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const description = Array.isArray(data?.error_messages)
-        ? data.error_messages.map((item) => item.description || item.error).filter(Boolean).join(' ')
-        : (data?.message || data?.error || 'O PagBank não aceitou a solicitação.');
+      const upstreamMessages = Array.isArray(data?.error_messages)
+        ? data.error_messages.map((item) => {
+          const parameter = sanitizeText(item?.parameter_name, 120);
+          const code = sanitizeText(item?.error, 80);
+          const message = sanitizeText(item?.description || item?.message || item?.error, 300);
+          return `${parameter ? `Campo ${parameter}: ` : ''}${message || 'valor inválido'}${code && code !== message ? ` [${code}]` : ''}`;
+        }).filter(Boolean)
+        : [];
+      let description = upstreamMessages.join(' ') || sanitizeText(data?.message || data?.error, 500) || 'O PagBank não aceitou a solicitação.';
+      if (response.status === 401) description = `Token PagBank inválido para o ambiente ${PAGBANK_ENV}. Use o token do mesmo ambiente e cole somente o token, sem a palavra Bearer. ${description}`;
+      if (response.status === 403) description = `A conta PagBank não tem permissão para usar a API de Checkout neste ambiente. ${description}`;
       const error = new Error(description || 'Não foi possível criar o pagamento no PagBank.');
       error.code = `PAGBANK_${response.status}`;
+      error.pagbankStatus = response.status;
       error.details = data;
       throw error;
     }
@@ -1953,11 +1975,14 @@ function secureEqualText(a, b) {
 async function handlePagBankWebhook(req, res) {
   const raw = await readRawBody(req);
   if (!raw) return json(res, 400, { ok: false, message: 'Payload vazio.' });
-  if (PAGBANK_VERIFY_WEBHOOK) {
-    if (!PAGBANK_TOKEN) return json(res, 503, { ok: false, message: 'PagBank não configurado.' });
+  if (PAGBANK_WEBHOOK_VERIFICATION !== 'disabled') {
     const received = String(req.headers['x-authenticity-token'] || '').trim().toLowerCase();
+    if (!received && PAGBANK_WEBHOOK_VERIFICATION === 'required') {
+      return json(res, 401, { ok: false, message: 'Assinatura do webhook ausente.' });
+    }
+    if (received && !PAGBANK_TOKEN) return json(res, 503, { ok: false, message: 'PagBank não configurado.' });
     const expected = crypto.createHash('sha256').update(`${PAGBANK_TOKEN}-${raw}`, 'utf8').digest('hex');
-    if (!received || !secureEqualText(received, expected)) return json(res, 401, { ok: false, message: 'Assinatura inválida.' });
+    if (received && !secureEqualText(received, expected)) return json(res, 401, { ok: false, message: 'Assinatura inválida.' });
   }
   let payload;
   try { payload = JSON.parse(raw); } catch (error) { return json(res, 400, { ok: false, message: 'JSON inválido.' }); }
@@ -2300,6 +2325,7 @@ async function handleApi(req, res, pathname) {
       const returnUrl = `${baseUrl}/?admin=1&donation=${encodeURIComponent(donation.protocol)}`;
       const checkoutPayload = {
         reference_id: donation.protocol,
+        customer_modifiable: true,
         items: [{ reference_id: donation.protocol, name: 'Apoio ao NZN', quantity: 1, unit_amount: amountCents }],
         payment_methods: [{ type: paymentMethod }],
         redirect_url: returnUrl,
@@ -2315,7 +2341,8 @@ async function handleApi(req, res, pathname) {
       return json(res, 200, { ok: true, donation: updated, checkoutUrl });
     } catch (error) {
       await store.setDonationError(donation.id, error.message);
-      return json(res, error.code === 'PAGBANK_NOT_CONFIGURED' ? 503 : 400, { ok: false, message: error.message, protocol: donation.protocol });
+      const responseStatus = error.code === 'PAGBANK_NOT_CONFIGURED' ? 503 : [401, 403].includes(error.pagbankStatus) ? 502 : 400;
+      return json(res, responseStatus, { ok: false, message: error.message, protocol: donation.protocol, pagbankStatus: error.pagbankStatus || null });
     }
   }
 
@@ -3094,7 +3121,7 @@ function serveStatic(req, res, pathname) {
     'Content-Type': file.type,
     'Cache-Control': 'no-store, max-age=0',
     'Pragma': 'no-cache',
-    'X-Quiz-Version': '6.8.37',
+    'X-Quiz-Version': '6.8.38',
   });
   res.end(file.data);
 }
@@ -3120,12 +3147,17 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, {
       ok: !storeInitError,
       app: 'NZN Quiz',
-      version: '6.8.37',
+      version: '6.8.38',
       persistenceMode: store.mode,
       storeReady,
       rooms: rooms.size,
       maxParticipantsPerRoom: MAX_PARTICIPANTS,
       startCountdownSeconds: START_COUNTDOWN_SECONDS,
+      pagbank: {
+        configured: Boolean(PAGBANK_TOKEN),
+        environment: PAGBANK_ENV,
+        webhookVerification: PAGBANK_WEBHOOK_VERIFICATION,
+      },
       time: new Date().toISOString(),
     });
     if (req.method === 'GET' && url.pathname === '/events') return handleEvents(req, res, url);
