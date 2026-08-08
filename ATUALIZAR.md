@@ -1,27 +1,35 @@
-# Atualização pontual PagBank — NZN Quiz 6.8.39
+# Atualizacao pontual 6.8.40 — Pix dentro da plataforma
 
-Esta correção deve ser aplicada sobre a versão 6.8.38.
+Use este pacote somente sobre a versao 6.8.39.
 
-## Arquivo para substituir no GitHub
+## Arquivo que deve ser enviado ao GitHub
 
-Substitua somente:
+Substitua apenas:
 
-- `server.js`
+```text
+server.js
+```
 
-O arquivo `ATUALIZAR.md` é apenas este manual e não precisa ser enviado ao GitHub.
+O arquivo `ATUALIZAR.md` e apenas este manual e nao precisa ser enviado.
 
-## O que foi corrigido
+## O que muda
 
-O Checkout PagBank enviava `redirect_waiting_time: 3`, mas a API aceita valores entre 5 e 120 segundos. A versão 6.8.39 envia 15 segundos.
+- Pix com QR Code e codigo Copia e Cola dentro da plataforma.
+- Contador de validade de 30 minutos.
+- Consulta automatica do status e botao para atualizar imediatamente.
+- CPF ou CNPJ solicitado apenas para criar o Pix, sem armazenamento no NZN Quiz.
+- Boleto continua abrindo a pagina segura do PagBank.
 
-## Como publicar
+## Render e banco de dados
 
-1. Abra o repositório no GitHub.
-2. Entre no arquivo `server.js`.
-3. Use a opção para substituir ou enviar a nova versão do arquivo.
-4. Confirme em **Commit changes**.
-5. Aguarde o deploy automático no Render ou use **Manual Deploy > Deploy latest commit**.
-6. Abra `/health` e confirme a versão `6.8.39`.
-7. Teste novamente o Pix com valor mínimo de R$ 2,00.
+- Nao e necessario alterar nenhuma variavel de ambiente do Render.
+- A conta PagBank usada pelo token precisa ter uma chave Pix ativa.
+- As novas colunas do banco sao criadas automaticamente ao iniciar a versao.
 
-Não é necessário alterar as variáveis do PagBank novamente se o token Sandbox já foi aceito.
+## Depois de substituir
+
+1. Envie o novo `server.js` ao GitHub e confirme o commit.
+2. Aguarde o Render publicar o commit mais recente.
+3. Abra `/health` e confirme a versao `6.8.40`.
+4. Teste o Pix com um CPF ou CNPJ valido; o QR Code deve aparecer dentro da plataforma.
+5. Teste o boleto; ele deve continuar abrindo o PagBank.
