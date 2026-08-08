@@ -1,8 +1,8 @@
-# Atualização pontual — NZN Quiz 6.9.1
+# Atualização pontual — NZN Quiz 6.9.2
 
-Este pacote deve ser aplicado sobre a versão 6.8.41.
+Este pacote deve ser aplicado sobre a versão 6.9.1.
 
-## Arquivo que vai para o GitHub
+## Arquivo para o GitHub
 
 Suba somente:
 
@@ -10,31 +10,23 @@ Suba somente:
 server.js
 ```
 
-O arquivo `ATUALIZAR.md` é apenas este manual e não precisa ser enviado.
+O arquivo `ATUALIZAR.md` é apenas este manual.
 
 ## Como atualizar
 
-1. Abra o repositório conectado ao Render.
-2. Substitua o `server.js` 6.8.41 pelo arquivo deste pacote.
-3. Faça um commit com a mensagem `Atualizar NZN Quiz para 6.9.1`.
-4. Aguarde o deploy ou use **Deploy latest commit** no Render.
-5. Abra `/health` e confirme `"version":"6.9.1"`.
-6. Atualize a página com `Ctrl + F5`.
+1. Substitua o `server.js` do repositório pelo arquivo deste pacote.
+2. Faça um commit com a mensagem `Atualizar interface para 6.9.2`.
+3. Aguarde o deploy do Render.
+4. Abra `/health` e confirme `"version":"6.9.2"`.
+5. Pressione `Ctrl + F5` para limpar o cache.
 
-## O que conferir
+## Conferência
 
-1. `/painel/quizzes` abre diretamente.
-2. O endereço antigo `/?admin=1` muda para `/painel`.
-3. Ao iniciar um quiz, a barra mostra `/apresentador/CODIGO` e a apresentação aparece.
-4. Faça o mesmo teste com uma nuvem de palavras.
-5. Crie uma sala e confira `/sala/CODIGO` e `/tela/CODIGO`.
-6. Teste o Pix Mercado Pago e o boleto PagBank.
+1. Entre em `/painel`: o menu dos módulos não deve aparecer nessa visão inicial.
+2. Abra `/painel/quizzes`: o menu superior deve aparecer.
+3. Confira login, quizzes, editores, resultados, usuários, apoios, conta, FAQ e suporte.
+4. Inicie um quiz e uma nuvem de palavras.
+5. Confirme que apresentador, participante, pódio e ranking continuam com o mesmo visual da versão 6.9.1.
+6. Teste Pix Mercado Pago e boleto PagBank.
 
-## Não precisa alterar
-
-- banco PostgreSQL;
-- variáveis do Mercado Pago ou PagBank;
-- `render.yaml`;
-- credenciais administrativas.
-
-O backup completo da 6.8.41 deve ser mantido como opção de retorno.
+Não é necessário alterar banco, variáveis do Render ou credenciais.
