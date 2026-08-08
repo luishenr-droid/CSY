@@ -1,29 +1,20 @@
-# NZN 7.0.0
+# NZN Quiz 6.8.37 — Hotfix de login
 
-Base de segurança: NZN 6.8.37.
+Correção pontual sobre a versão 6.8.36.
 
-## O que mudou nesta primeira implementação 7.0
-- Novo design system em roxo, branco e grafite.
-- Administração com visual claro e menos poluído.
-- Navegação do painel reorganizada e responsiva.
-- Quiz ao vivo com palco escuro, respostas mais limpas e foco na pergunta.
-- Nuvem de palavras redesenhada no participante, apresentação e revelação.
-- Ranking e pódio com visual mais imersivo.
-- Biblioteca de quizzes e telas de criação refinadas.
-- Ajustes mobile e tablet.
-- Identificação interna atualizada para 7.0.0.
+## Corrigido
 
-## Preservado da 6.8.37
-- APIs e fluxo de salas.
-- Cadastro/login e perfis.
-- Permissões de instrutor/ADM Master.
-- Quizzes, respostas, pontuação, ranking e resultados.
-- Nuvem de palavras.
-- Relatórios Excel.
-- Suporte, FAQ e Apoie o NZN.
-- Compatibilidade com PostgreSQL/Render.
+- Corrigida a chamada do contador de notificações de suporte que causava `TypeError: store.getSupportUnreadCount is not a function` após o login.
+- A função correta `supportUnreadCount()` já existia no DataStore; o endpoint estava chamando o nome errado.
+- Nenhuma funcionalidade da 6.8.36 foi removida ou redesenhada.
 
-## Publicação
-Use os mesmos comandos e variáveis de ambiente da 6.8.37. O comando de inicialização continua sendo:
+## Atualização
 
-npm start
+Substitua no GitHub:
+
+- `server.js`
+- `package.json`
+
+Depois no Render: **Manual Deploy → Clear build cache & deploy**.
+
+Confirme em `/health` que a versão é `6.8.37`.
